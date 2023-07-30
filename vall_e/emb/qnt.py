@@ -88,7 +88,9 @@ img_path_queue = Queue()
 
 
 
-def process_qnt(path,out_path):
+def process_qnt(path,out_path,rank):
+    gpu_id = rank %2 
+    torch.cuda.set_device(gpu_id)
     qnt = encode_from_file(path)
     torch.save(qnt.cpu(), out_path)
 
@@ -107,12 +109,14 @@ def main():
 
     pool = Pool(processes=args.worker_size)
 
+    i = 0
     for path in tqdm(paths):
         out_path = _replace_file_extension(path, ".qnt.pt")
         if out_path.exists():
             continue
 
-        pool.apply_async(process_qnt,(path,out_path,))
+        pool.apply(process_qnt,(path,out_path,i))
+        i = i+1
 
     pool.close()
     pool.join()

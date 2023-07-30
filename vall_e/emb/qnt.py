@@ -11,6 +11,8 @@ from encodec import EncodecModel
 from encodec.utils import convert_audio
 from torch import Tensor
 from tqdm import tqdm
+from multiprocessing import Pool, cpu_count, Process, Queue
+import torch.multiprocessing as mp
 
 from ..config import cfg
 
@@ -74,22 +76,53 @@ def encode_from_file(path, device="cuda"):
     return encode(wav, sr, device)
 
 
+def getimgpath_process(path, img_path_queue):
+    for img_name in os.listdir(root_path):
+        img_path = osp.join(root_path, img_name)
+        img_path_queue.put(img_path)
+
+
+
+img_path_queue = Queue(),
+
+def process_path(paths):
+    for path in tqdm(paths):
+        out_path = _replace_file_extension(path, ".qnt.pt")
+        if out_path.exists():
+            continue
+        #多进程分发
+        img_path_queue.put(path)
+
+
+def process_qnt(img_path_queue):
+        while True:
+            path = img_path_queue.get()    
+            out_path = _replace_file_extension(path, ".qnt.pt")
+            if out_path.exists():
+                return
+            qnt = encode_from_file(path)
+            torch.save(qnt.cpu(), out_path)
+
 def main():
+    mp.set_start_method("spawn")
+
     parser = argparse.ArgumentParser()
     parser.add_argument("folder", type=Path)
+    parser.add_argument("worker-size", type=int)
     parser.add_argument("--suffix", default=".wav")
     args = parser.parse_args()
 
     paths = [*args.folder.rglob(f"*{args.suffix}")]
     random.shuffle(paths)
 
-    for path in tqdm(paths):
-        out_path = _replace_file_extension(path, ".qnt.pt")
-        if out_path.exists():
-            continue
-        qnt = encode_from_file(path)
-        torch.save(qnt.cpu(), out_path)
+    main_process = Process(target=process_path, args=(paths))
+    main_process.start()
 
+    for i in range(args.worker_size):
+        Preprocess_Process = Process(target=process_qnt, args=(img_path_queue))
+        Preprocess_Process.start()
+    
 
 if __name__ == "__main__":
     main()
+

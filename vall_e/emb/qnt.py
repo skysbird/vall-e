@@ -83,7 +83,7 @@ def getimgpath_process(path, img_path_queue):
 
 
 
-img_path_queue = Queue(),
+img_path_queue = Queue()
 
 def process_path(paths):
     for path in tqdm(paths):
@@ -94,34 +94,36 @@ def process_path(paths):
         img_path_queue.put(path)
 
 
-def process_qnt(img_path_queue):
-        while True:
-            path = img_path_queue.get()    
-            out_path = _replace_file_extension(path, ".qnt.pt")
-            if out_path.exists():
-                return
-            qnt = encode_from_file(path)
-            torch.save(qnt.cpu(), out_path)
+def process_qnt(path,out_path):
+    qnt = encode_from_file(path)
+    torch.save(qnt.cpu(), out_path)
 
 def main():
-    mp.set_start_method("spawn")
+    #mp.set_start_method("spawn")
 
     parser = argparse.ArgumentParser()
-    parser.add_argument("folder", type=Path)
-    parser.add_argument("worker-size", type=int)
+    parser.add_argument("--worker-size", type=int)
     parser.add_argument("--suffix", default=".wav")
+    parser.add_argument("folder", type=Path)
     args = parser.parse_args()
 
     paths = [*args.folder.rglob(f"*{args.suffix}")]
     random.shuffle(paths)
 
-    main_process = Process(target=process_path, args=(paths))
-    main_process.start()
 
-    for i in range(args.worker_size):
-        Preprocess_Process = Process(target=process_qnt, args=(img_path_queue))
-        Preprocess_Process.start()
-    
+    pool = Pool(processes=args.worker_size)
+
+    for path in tqdm(paths):
+        out_path = _replace_file_extension(path, ".qnt.pt")
+        if out_path.exists():
+            continue
+
+        pool.apply_async(process_qnt,(path,out_path,))
+
+    pool.close()
+    pool.join()
+
+
 
 if __name__ == "__main__":
     main()

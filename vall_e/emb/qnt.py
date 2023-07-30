@@ -85,13 +85,7 @@ def getimgpath_process(path, img_path_queue):
 
 img_path_queue = Queue()
 
-def process_path(paths):
-    for path in tqdm(paths):
-        out_path = _replace_file_extension(path, ".qnt.pt")
-        if out_path.exists():
-            continue
-        #多进程分发
-        img_path_queue.put(path)
+
 
 
 def process_qnt(path,out_path):

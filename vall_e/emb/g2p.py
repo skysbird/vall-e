@@ -28,19 +28,27 @@ def encode(graphs: str) -> list[str]:
     ignored = {" ", *string.punctuation}
     return ["_" if p in ignored else p for p in phones]
 
+import time
+
 
 def process_g2p(path, phone_path):
     graphs = _get_graphs(path)
+    #start_time = time.time()
+
     phones = encode(graphs)
     with open(phone_path, "w") as f:
         f.write(" ".join(phones))
+
+    #end_time = time.time()
+    #print("耗时: {:.5f}豪秒".format((end_time - start_time)*1000))
 
 
 @torch.no_grad()
 def main():
     parser = argparse.ArgumentParser()
-    parser.add_argument("folder", type=Path)
     parser.add_argument("--suffix", type=str, default=".normalized.txt")
+    parser.add_argument("--worker-size", type=int)
+    parser.add_argument("folder", type=Path)
     args = parser.parse_args()
 
     paths = list(args.folder.rglob(f"*{args.suffix}"))
@@ -53,7 +61,7 @@ def main():
         phone_path = path.with_name(path.stem.split(".")[0] + ".phn.txt")
         if phone_path.exists():
             continue
-        pool.apply_async(process_g2p,(path,phone_path,))
+        pool.apply(process_g2p,(path,phone_path,))
 
     pool.close()
     pool.join()

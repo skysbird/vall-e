@@ -6,4 +6,4 @@ batch_size: 24
 eval_batch_size: 24
 eval_every: 10_000
 
-sampling_temperature: 1.0
+sampling_temperature: 0.2

@@ -12,8 +12,8 @@ from torch import Tensor
 from torch.utils.data import DataLoader, Dataset
 from tqdm import tqdm
 
-from .config import cfg
-from .sampler import Sampler
+from config import cfg
+from sampler import Sampler
 
 torch.multiprocessing.set_sharing_strategy("file_system")
 

@@ -14,7 +14,7 @@ from tqdm import tqdm
 from multiprocessing import Pool, cpu_count, Process, Queue
 import torch.multiprocessing as mp
 
-from ..config import cfg
+from config import cfg
 
 
 @cache

@@ -5,11 +5,11 @@ from collections import defaultdict
 import torch
 from tqdm import tqdm
 
-from .config import cfg
-from .data import create_train_val_dataloader
-from .emb import qnt
-from .utils import setup_logging, to_device, trainer
-from .vall_e import get_model
+from config import cfg
+from data import create_train_val_dataloader
+from emb import qnt
+from utils import setup_logging, to_device, trainer
+from vall_e import get_model
 
 _logger = logging.getLogger(__name__)
 

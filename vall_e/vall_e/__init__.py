@@ -1,4 +1,4 @@
-from ..config import cfg
+from config import cfg
 from .ar import AR
 from .nar import NAR
 

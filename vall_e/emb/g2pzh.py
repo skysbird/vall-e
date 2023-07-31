@@ -9,6 +9,8 @@ from g2p_zh_en import G2P
 from tqdm import tqdm
 from multiprocessing import Pool, cpu_count, Process, Queue
 import torch.multiprocessing as mp
+from multiprocessing.pool import ThreadPool
+
 
 @cache
 def _get_model():
@@ -25,6 +27,8 @@ def _get_graphs(path):
 def encode(graphs: str, language:str) -> list[str]:
     g2p = _get_model()
     phones = g2p.g2p(text=graphs,language=language)
+    print(graphs)
+    print(phones)
     ignored = {" ", *string.punctuation}
     return ["_" if p in ignored else p for p in phones]
 
@@ -56,7 +60,7 @@ def main():
     random.shuffle(paths)
 
 
-    pool = Pool(processes=args.worker_size)
+    pool = ThreadPool(args.worker_size)
 
     for path in tqdm(paths):
         phone_path = path.with_name(path.stem.split(".")[0] + ".phn.txt")

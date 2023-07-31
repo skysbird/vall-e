@@ -11,8 +11,8 @@ from multiprocessing import Pool, cpu_count, Process, Queue
 import torch.multiprocessing as mp
 
 @cache
-def _get_model(language:str):
-    return G2P(language=language)
+def _get_model():
+    return G2P()
 
 
 @cache
@@ -23,8 +23,8 @@ def _get_graphs(path):
 
 
 def encode(graphs: str, language:str) -> list[str]:
-    g2p = _get_model(language)
-    phones = g2p(graphs)
+    g2p = _get_model()
+    phones = g2p.g2p(text=graphs,language=language)
     ignored = {" ", *string.punctuation}
     return ["_" if p in ignored else p for p in phones]
 

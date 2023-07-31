@@ -13,8 +13,9 @@ from torch import Tensor
 from tqdm import tqdm
 from multiprocessing import Pool, cpu_count, Process, Queue
 import torch.multiprocessing as mp
+from multiprocessing.pool import ThreadPool
 
-from config import cfg
+from vall_e.config import cfg
 
 
 @cache

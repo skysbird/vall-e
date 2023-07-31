@@ -4,7 +4,7 @@ from pathlib import Path
 
 import diskcache
 
-from utils import Config as ConfigBase
+from vall_e.utils import Config as ConfigBase
 
 
 @dataclass(frozen=True)

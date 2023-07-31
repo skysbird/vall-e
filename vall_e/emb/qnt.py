@@ -90,10 +90,14 @@ img_path_queue = Queue()
 
 
 def process_qnt(path,out_path,rank):
-    gpu_id = rank %2 
-    torch.cuda.set_device(gpu_id)
-    qnt = encode_from_file(path)
-    torch.save(qnt.cpu(), out_path)
+    try:
+        gpu_id = rank %2 
+        torch.cuda.set_device(gpu_id)
+        qnt = encode_from_file(path)
+        torch.save(qnt.cpu(), out_path)
+    except Exception as e:
+        print(e)
+        print(f"path={path}")
 
 def main():
     #mp.set_start_method("spawn")

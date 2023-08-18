@@ -15,7 +15,7 @@ from multiprocessing import Pool, cpu_count, Process, Queue
 import torch.multiprocessing as mp
 from multiprocessing.pool import ThreadPool
 
-from vall_e.config import cfg
+from config import cfg
 
 
 @cache

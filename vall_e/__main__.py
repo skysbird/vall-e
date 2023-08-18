@@ -4,8 +4,8 @@ from pathlib import Path
 import torch
 from einops import rearrange
 
-from .emb import g2p, qnt
-from .utils import to_device
+from emb import g2p, qnt,g2pzh
+from utils import to_device
 
 
 def main():
@@ -26,7 +26,7 @@ def main():
     proms = qnt.encode_from_file(args.reference)
     proms = rearrange(proms, "1 l t -> t l")
 
-    phns = torch.tensor([symmap[p] for p in g2p.encode(args.text)])
+    phns = torch.tensor([symmap[p] for p in g2pzh.encode(args.text,'zh-cn')])
 
     proms = to_device(proms, args.device)
     phns = to_device(phns, args.device)

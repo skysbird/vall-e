@@ -4,7 +4,7 @@ from pathlib import Path
 
 import diskcache
 
-from vall_e.utils import Config as ConfigBase
+from .utils import Config as ConfigBase
 
 
 @dataclass(frozen=True)
@@ -51,7 +51,8 @@ class Config(ConfigBase):
 
     @cached_property
     def get_spkr(self):
-        return eval(self.spkr_name_getter)
+        spker = eval(self.spkr_name_getter)
+        return spker
 
     @property
     def fp16_cfg(self):

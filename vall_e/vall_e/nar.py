@@ -1,7 +1,7 @@
 import torch
 from torch import Tensor
 
-from base import Base
+from .base import Base
 
 
 class NAR(Base):

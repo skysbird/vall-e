@@ -238,7 +238,8 @@ class Embedding(nn.Embedding):
     def forward(self, x_list: list[Tensor]) -> list[Tensor]:
         if len(x_list) == 0:
             return []
-        return super().forward(torch.cat(x_list)).split([*map(len, x_list)])
+        t = torch.cat(x_list)
+        return super().forward(t).split([*map(len, x_list)])
 
 
 class MultiEmbedding(nn.Module):

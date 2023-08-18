@@ -2,8 +2,8 @@ import argparse
 
 import torch
 
-from .data import VALLEDatset, create_train_val_dataloader
-from .train import load_engines
+from data import VALLEDatset, create_train_val_dataloader
+from train import load_engines
 
 
 def main():

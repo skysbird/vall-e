@@ -27,8 +27,6 @@ def _get_graphs(path):
 def encode(graphs: str, language:str) -> list[str]:
     g2p = _get_model()
     phones = g2p.g2p(text=graphs,language=language)
-    print(graphs)
-    print(phones)
     ignored = {" ", *string.punctuation}
     return ["_" if p in ignored else p for p in phones]
 
@@ -41,7 +39,7 @@ def process_g2p(path, phone_path,language):
 
     phones = encode(graphs,language)
     with open(phone_path, "w") as f:
-        f.write(" ".join(phones))
+         f.write(" ".join(phones))
 
     #end_time = time.time()
     #print("耗时: {:.5f}豪秒".format((end_time - start_time)*1000))
@@ -64,8 +62,8 @@ def main():
 
     for path in tqdm(paths):
         phone_path = path.with_name(path.stem.split(".")[0] + ".phn.txt")
-        if phone_path.exists():
-            continue
+        #if phone_path.exists():
+        #    continue
         pool.apply(process_g2p,(path,phone_path,args.language,))
 
     pool.close()
